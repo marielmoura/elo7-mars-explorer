@@ -17,4 +17,11 @@ public class AxisPosition {
     public Integer getPosY() {
         return posY;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (this.posX.equals(((AxisPosition) obj).posX)
+                && this.posY.equals(((AxisPosition) obj).posY));
+    }
+
 }

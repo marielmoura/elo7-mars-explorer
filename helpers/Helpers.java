@@ -5,6 +5,8 @@ import models.CardinalDirection;
 import models.Planet;
 import models.SpaceProbe;
 
+import java.util.List;
+
 public class Helpers {
 
     public static AxisPosition getNewPosition(Integer keyCode, AxisPosition position, CardinalDirection direction, Planet planet) {
@@ -55,6 +57,13 @@ public class Helpers {
         }
     }
 
+    public static void clearScreen() {
+        try {
+            Runtime.getRuntime().exec("cls");
+        } catch (final Exception e) {
+            //  Handle any exceptions.
+        }
+    }
 
     public static CardinalDirection getNewDirection(Integer keyCode, CardinalDirection currentDirection) {
         try {
@@ -108,7 +117,7 @@ public class Helpers {
 
     }
 
-    public static void drawPlanetSurface(SpaceProbe spaceProbe, Planet planet) {
+    public static void drawPlanetSurface(SpaceProbe spaceProbe, Planet planet, List<AxisPosition> mappedPositions) {
         try {
             System.out.println("Reading mars surface... AreaX: " + planet.getSurfaceSizeX() + " AreaY: " + planet.getSurfaceSizeY());
             System.out.println("Sending coordinates... PosX: " + spaceProbe.getPosition().getPosX() + " PosY: " + spaceProbe.getPosition().getPosY() + " Direction: " + spaceProbe.getDirection());
@@ -119,10 +128,14 @@ public class Helpers {
 
                 for (Integer posX = 0; posX < planet.getSurfaceSizeX(); posX++) {
 
-                    if (posX.equals(spaceProbe.getPosition().getPosX()) && posY.equals(spaceProbe.getPosition().getPosY())) {
-                        marsSurfaceLine.append(spaceProbe.getDirection().toString() + spaceProbe.getDirection().toString() + spaceProbe.getDirection().toString() + spaceProbe.getDirection().toString());
+                    AxisPosition drawingPosition = new AxisPosition(posX, posY);
+
+                    if (drawingPosition.equals(spaceProbe.getPosition())) {
+                        marsSurfaceLine.append("[" + spaceProbe.getDirection().toString() + "]");
                     } else {
-                        marsSurfaceLine.append("====");
+
+                        String planetPosition = mappedPositions.contains(drawingPosition) ? "XXX" : "===";
+                        marsSurfaceLine.append(planetPosition);
                     }
                 }
 
