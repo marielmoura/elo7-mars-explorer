@@ -1,8 +1,5 @@
 import helpers.Helpers;
-import models.AxisPosition;
-import models.CardinalDirection;
-import models.Planet;
-import models.SpaceProbe;
+import models.*;
 
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
@@ -26,61 +23,18 @@ public class MappingMars extends JFrame {
                 try {
 
                     Helpers.clearScreen();
+
                     Integer keyCode = e.getKeyCode();
 
-                    //SELECT SPACE PROBE
-                    if (probesOnMars.size() > 0) {
-                        probesOnMars.get(probesOnMars.size() - 1);
-                        Integer probeCodeToSelect = keyCode - 48;
-                        Optional<SpaceProbe> selectedSpaceProbe = probesOnMars.stream().filter(spaceProbe -> spaceProbe.getCode().contains("P" + probeCodeToSelect)).findFirst();
-                        if (selectedSpaceProbe.isPresent()) {
-                            currentSpaceProbe = selectedSpaceProbe.get();
+                    selectSpaceProbe(keyCode);
 
-                        }
-                    }
+                    landNewSpaceProbe(keyCode, Optional.empty());
 
-                    //LAND NEW SPACE PROBE
-                    if (keyCode.equals(67)) {
+                    moveSpaceProbe(keyCode);
 
-                        if (newProbeCode < 9) {
-                            newProbeCode++;
-                            Helpers.addSpaceProbeToPlanet("P" + newProbeCode, mars, probesOnMars);
-                            currentSpaceProbe = probesOnMars.get(probesOnMars.size() - 1);
-                        }
+                    spinSpaceProbe(keyCode);
 
-                    }
-
-                    //SEND COMMAND TO SPACE PROBE
-                    if (probesOnMars.size() > 0 && currentSpaceProbe != null) {
-
-                        System.out.println("Space Probe selected: " + currentSpaceProbe.getCode());
-
-                        probesOnMars.remove(currentSpaceProbe);
-
-                        CardinalDirection currentProbeDirection = currentSpaceProbe.getDirection();
-                        AxisPosition currentProbePosition = currentSpaceProbe.getPosition();
-
-                        AxisPosition newPosition = currentProbePosition;
-                        CardinalDirection newDirection = currentProbeDirection;
-
-                        if (keyCode.equals(38)) {
-                            newPosition = Helpers.getNewPosition(currentProbePosition, currentProbeDirection, mars);
-                        }
-
-                        if (keyCode.equals(37)) {
-                            newDirection = Helpers.getNewLeftDirection(currentProbeDirection);
-                        }
-
-                        if (keyCode.equals(39)) {
-                            newDirection = Helpers.getNewRightDirection(currentProbeDirection);
-                        }
-
-                        currentSpaceProbe = new SpaceProbe(currentSpaceProbe.getCode(), newDirection, newPosition);
-
-                        probesOnMars.add(currentSpaceProbe);
-
-                        Helpers.drawPlanet(mars, probesOnMars);
-                    }
+                    Helpers.drawPlanet(mars, probesOnMars);
 
                 } catch (Exception ex) {
                     throw ex;
@@ -92,6 +46,17 @@ public class MappingMars extends JFrame {
     public static void main(String[] args) {
         try {
 
+            AxisPosition landingPosition = new AxisPosition(1, 2, true);
+            landNewSpaceProbe(KeyCommand.LandProbe.getCode(), Optional.of(landingPosition));
+//            spinSpaceProbe(KeyCommand.SpinLeft.getCode());
+//            moveSpaceProbe(KeyCommand.Move.getCode());
+//            spinSpaceProbe(KeyCommand.SpinLeft.getCode());
+//            moveSpaceProbe(KeyCommand.Move.getCode());
+//            spinSpaceProbe(KeyCommand.SpinLeft.getCode());
+//            moveSpaceProbe(KeyCommand.Move.getCode());
+//            spinSpaceProbe(KeyCommand.SpinLeft.getCode());
+//            moveSpaceProbe(KeyCommand.Move.getCode());
+//            moveSpaceProbe(KeyCommand.Move.getCode());
             Helpers.drawPlanet(mars, probesOnMars);
 
             SwingUtilities.invokeLater(() -> {
@@ -103,5 +68,89 @@ public class MappingMars extends JFrame {
         } catch (Exception ex) {
             throw ex;
         }
+    }
+
+    public static void landNewSpaceProbe(Integer keyCode, Optional<AxisPosition> landingPosition) {
+
+        if (keyCode.equals(KeyCommand.LandProbe.getCode())) {
+
+            if (newProbeCode < 9) {
+                newProbeCode++;
+                AxisPosition unmappedPosition = Helpers.getPlanetUnmappedPosition(mars);
+
+                if (landingPosition.isPresent()) {
+                    unmappedPosition = landingPosition.get();
+                }
+
+                Helpers.addSpaceProbeToPlanet("P" + newProbeCode, mars, probesOnMars, unmappedPosition);
+                currentSpaceProbe = probesOnMars.get(probesOnMars.size() - 1);
+            }
+
+        }
+
+    }
+
+    public static void spinSpaceProbe(Integer keyCode) {
+
+        if (probesOnMars.size() > 0 && currentSpaceProbe != null) {
+
+            System.out.println("Space Probe selected: " + currentSpaceProbe.getCode());
+
+            probesOnMars.remove(currentSpaceProbe);
+
+            CardinalDirection currentProbeDirection = currentSpaceProbe.getDirection();
+            CardinalDirection newDirection = currentProbeDirection;
+
+            //SEND COMMAND TO SPIN LEFT
+            if (keyCode.equals(KeyCommand.SpinLeft.getCode())) {
+                newDirection = Helpers.getNewLeftDirection(currentProbeDirection);
+            }
+
+            //SEND COMMAND TO SPIN RIGHT
+            if (keyCode.equals(KeyCommand.SpinRight.getCode())) {
+                newDirection = Helpers.getNewRightDirection(currentProbeDirection);
+            }
+
+            currentSpaceProbe = new SpaceProbe(
+                    currentSpaceProbe.getCode(), newDirection, currentSpaceProbe.getPosition());
+
+            probesOnMars.add(currentSpaceProbe);
+        }
+    }
+
+    public static void moveSpaceProbe(Integer keyCode) {
+
+        if (probesOnMars.size() > 0 && currentSpaceProbe != null) {
+
+            System.out.println("Space Probe selected: " + currentSpaceProbe.getCode());
+
+            probesOnMars.remove(currentSpaceProbe);
+
+            AxisPosition newPosition = currentSpaceProbe.getPosition();
+
+            //SEND COMMAND TO MOVE SPACE
+            if (keyCode.equals(KeyCommand.Move.getCode())) {
+                newPosition = Helpers.getNewPosition(currentSpaceProbe.getPosition(), currentSpaceProbe.getDirection(), mars);
+            }
+
+            currentSpaceProbe = new SpaceProbe(
+                    currentSpaceProbe.getCode(), currentSpaceProbe.getDirection(), newPosition);
+
+            probesOnMars.add(currentSpaceProbe);
+        }
+    }
+
+    public static void selectSpaceProbe(Integer keyCode){
+
+        if (probesOnMars.size() > 0) {
+            probesOnMars.get(probesOnMars.size() - 1);
+            Integer probeCodeToSelect = keyCode - 48;
+            Optional<SpaceProbe> selectedSpaceProbe = probesOnMars.stream().filter(spaceProbe -> spaceProbe.getCode().contains("P" + probeCodeToSelect)).findFirst();
+            if (selectedSpaceProbe.isPresent()) {
+                currentSpaceProbe = selectedSpaceProbe.get();
+
+            }
+        }
+
     }
 }

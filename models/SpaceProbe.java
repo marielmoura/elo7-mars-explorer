@@ -23,28 +23,4 @@ public class SpaceProbe {
     public String getCode() {
         return code;
     }
-
-    //    public CardinalDirection getDirection() {
-//        return direction;
-//    }
-//
-//    public void setDirection(CardinalDirection direction) {
-//        direction = direction;
-//    }
-//
-//    public Integer getPosX() {
-//        return posX;
-//    }
-//
-//    public void setPosX(Integer posX) {
-//        posX = posX;
-//    }
-//
-//    public Integer getPosY() {
-//        return posY;
-//    }
-//
-//    public void setPosY(Integer posY) {
-//        posY = posY;
-//    }
 }
