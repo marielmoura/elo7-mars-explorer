@@ -25,6 +25,7 @@ public class Helpers {
         System.out.println("[Up] key: Move last space probe");
         System.out.println("[Right] key: Turn right last space probe");
         System.out.println("[Left] key: Turn left last space probe");
+        System.out.println("[1-9] key: Select space probe");
         System.out.println("");
         System.out.println("Planet explored: " + new DecimalFormat(".##").format(planetExploredPercentage) + " %");
 
