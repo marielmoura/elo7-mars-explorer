@@ -22,8 +22,8 @@ public class Helpers {
         System.out.println("[SPACE PROBE COMMANDS]");
         System.out.println("[C] key: Land new space probe");
         System.out.println("[Up] key: Move space probe");
-        System.out.println("[SpinRight] key: Turn right space probe");
-        System.out.println("[SpinLeft] key: Turn left space probe");
+        System.out.println("[Right] key: Turn right space probe");
+        System.out.println("[Left] key: Turn left space probe");
         System.out.println("[1-9] key: Select space probe");
         System.out.println("Planet explored: " + new DecimalFormat(".##").format(planetExploredPercentage) + " %");
 
