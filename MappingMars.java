@@ -59,8 +59,6 @@ public class MappingMars extends JFrame {
 
                         lastProbeLanded = new SpaceProbe(lastProbeLanded.getCode(), newDirection, newPosition);
 
-                        Helpers.showPlanetExploredPercentage(mars);
-
                         probesOnMars.add(lastProbeLanded);
                     }
 

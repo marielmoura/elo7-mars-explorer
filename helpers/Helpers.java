@@ -14,12 +14,18 @@ import java.util.stream.Collectors;
 public class Helpers {
 
 
-
-    public static void showPlanetExploredPercentage(Planet planet){
+    public static void showInfos(Planet planet) {
 
         Integer allPlanetPositions = planet.getPositions().size();
         Integer unmappedPlanetPositions = planet.getPositions().stream().filter(x -> x.getMapped()).collect(Collectors.toList()).size();
+
         Double planetExploredPercentage = ((double) unmappedPlanetPositions / (double) allPlanetPositions) * 100;
+        System.out.println("[SPACE PROBE COMMANDS]");
+        System.out.println("[C] key: Land new space probe");
+        System.out.println("[Up] key: Move last space probe");
+        System.out.println("[Right] key: Turn right last space probe");
+        System.out.println("[Left] key: Turn left last space probe");
+        System.out.println("");
         System.out.println("Planet explored: " + new DecimalFormat(".##").format(planetExploredPercentage) + " %");
 
     }
@@ -105,6 +111,8 @@ public class Helpers {
 
     public static void drawPlanet(Planet planet, List<SpaceProbe> probesOnSoil) {
 
+        System.out.println("");
+        Helpers.showInfos(planet);
         System.out.println("");
 
         for (int posY = 0; posY < planet.getSurfaceSizeY(); posY++) {
