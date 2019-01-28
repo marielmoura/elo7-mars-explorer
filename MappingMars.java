@@ -1,5 +1,4 @@
 import helpers.Helpers;
-import javafx.scene.chart.Axis;
 import models.AxisPosition;
 import models.CardinalDirection;
 import models.Planet;
@@ -13,11 +12,9 @@ import java.util.List;
 
 public class MappingMars extends JFrame {
 
-    static final AxisPosition probePosition = new AxisPosition(0, 0);
-    static SpaceProbe currentSpaceProbe = new SpaceProbe(CardinalDirection.N, probePosition);
-    static List<AxisPosition> mappedPlanetPositions = new ArrayList<>();
-
-    static final Planet mars = new Planet(60);
+    static List<SpaceProbe> probesOnMars = new ArrayList<>();
+    static Planet mars = new Planet(20);
+    static Integer newProbeCode = 0;
 
     MappingMars() {
         addKeyListener(new KeyAdapter() {
@@ -29,19 +26,45 @@ public class MappingMars extends JFrame {
                     Helpers.clearScreen();
                     Integer keyCode = e.getKeyCode();
 
-                    CardinalDirection currentProbeDirection = currentSpaceProbe.getDirection();
-                    AxisPosition currentProbePosition = currentSpaceProbe.getPosition();
+                    if (keyCode.equals(67)) {
 
-                    if (!mappedPlanetPositions.contains(currentProbePosition)) {
-                        mappedPlanetPositions.add(currentProbePosition);
+                        newProbeCode++;
+                        Helpers.addSpaceProbeToPlanet("P" + newProbeCode, mars, probesOnMars);
+
                     }
 
-                    AxisPosition newPosition = Helpers.getNewPosition(keyCode, currentProbePosition, currentProbeDirection, mars);
-                    CardinalDirection newDirection = Helpers.getNewDirection(keyCode, currentProbeDirection);
+                    if (probesOnMars.size() > 0) {
 
-                    currentSpaceProbe = new SpaceProbe(newDirection, newPosition);
+                        SpaceProbe lastProbeLanded = probesOnMars.get(probesOnMars.size() - 1);
 
-                    Helpers.drawPlanetSurface(currentSpaceProbe, mars, mappedPlanetPositions);
+                        probesOnMars.remove(lastProbeLanded);
+
+                        CardinalDirection currentProbeDirection = lastProbeLanded.getDirection();
+                        AxisPosition currentProbePosition = lastProbeLanded.getPosition();
+
+                        AxisPosition newPosition = currentProbePosition;
+                        CardinalDirection newDirection = currentProbeDirection;
+
+                        if (keyCode.equals(38)) {
+                            newPosition = Helpers.getNewPosition(currentProbePosition, currentProbeDirection, mars);
+                        }
+
+                        if (keyCode.equals(37)) {
+                            newDirection = Helpers.getNewLeftDirection(currentProbeDirection);
+                        }
+
+                        if (keyCode.equals(39)) {
+                            newDirection = Helpers.getNewRightDirection(currentProbeDirection);
+                        }
+
+                        lastProbeLanded = new SpaceProbe(lastProbeLanded.getCode(), newDirection, newPosition);
+
+                        Helpers.showPlanetExploredPercentage(mars);
+
+                        probesOnMars.add(lastProbeLanded);
+                    }
+
+                    Helpers.drawPlanet(mars, probesOnMars);
 
                 } catch (Exception ex) {
                     throw ex;
@@ -53,7 +76,8 @@ public class MappingMars extends JFrame {
     public static void main(String[] args) {
         try {
 
-            Helpers.drawPlanetSurface(currentSpaceProbe, mars, mappedPlanetPositions);
+            Helpers.drawPlanet(mars, probesOnMars);
+
             SwingUtilities.invokeLater(() -> {
                 MappingMars f = new MappingMars();
                 f.setFocusable(true);
