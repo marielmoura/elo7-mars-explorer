@@ -128,7 +128,7 @@ public class MappingMars extends JFrame {
 
             AxisPosition newPosition = currentSpaceProbe.getPosition();
 
-            //SEND COMMAND TO MOVE SPACE
+            //SEND COMMAND TO MOVE
             if (keyCode.equals(KeyCommand.Move.getCode())) {
                 newPosition = Helpers.getNewPosition(currentSpaceProbe.getPosition(), currentSpaceProbe.getDirection(), mars);
             }
